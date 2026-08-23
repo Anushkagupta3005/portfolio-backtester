@@ -17,10 +17,12 @@ Usage:   python backtest.py <TICKER>
 import sys
 import pandas as pd
 import mysql.connector
+from config import DB_CONFIG
 import matplotlib
 matplotlib.use("TkAgg")          # interactive window on macOS
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
+
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -29,9 +31,7 @@ import matplotlib.dates as mdates
 
 def load_prices(ticker: str) -> pd.DataFrame:
     """Load OHLCV from MySQL (same connection as ingest.py / strategy.py)."""
-    conn = mysql.connector.connect(
-        host="localhost", user="root", password="YOUR_PASSWORD_HERE", database="backtester"
-    )
+    conn = mysql.connector.connect(**DB_CONFIG)
     query = """
         SELECT date, open, high, low, close, volume
           FROM price_history

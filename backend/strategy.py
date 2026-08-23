@@ -19,12 +19,7 @@ import mysql.connector
 import pandas as pd
 
 # --- DB config: match whatever is hardcoded in ingest.py ---
-DB_CONFIG = {
-    "host": "localhost",
-    "user": "root",
-    "password": "YOUR_PASSWORD_HERE",          # <-- fill in to match ingest.py
-    "database": "backtester",
-}
+from config import DB_CONFIG
 
 
 def load_price_history(ticker: str) -> pd.DataFrame:

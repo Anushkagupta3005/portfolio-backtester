@@ -14,13 +14,7 @@ import yfinance as yf
 
 # ---- MySQL connection config ----
 # Update these to match your local setup.
-DB_CONFIG = {
-    "host": "localhost",
-    "user": "root",
-    "password": "YOUR_PASSWORD_HERE",  # <-- change this
-    "database": "backtester",
-}
-
+from config import DB_CONFIG
 
 def fetch_price_data(ticker: str, start_date: str, end_date: str):
     """Pull OHLCV data from yfinance for the given ticker and date range."""
