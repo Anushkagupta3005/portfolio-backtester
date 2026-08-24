@@ -1,0 +1,114 @@
+<div class="page">
+  <div class="container">
+    <header class="page-header">
+      <h1>Portfolio Backtester</h1>
+      <p class="subtitle">Strategy-agnostic backtesting engine — SMA · RSI · Buy &amp; Hold</p>
+    </header>
+
+    <div class="form-card">
+      <div class="form-row">
+        <label>
+          Ticker
+          <select [(ngModel)]="selectedTicker">
+            <option *ngFor="let t of tickers" [value]="t">{{ t }}</option>
+          </select>
+        </label>
+
+        <label>
+          Strategy
+          <select [(ngModel)]="selectedStrategy">
+            <option *ngFor="let s of strategies" [value]="s">{{ s }}</option>
+          </select>
+        </label>
+
+        <label>
+          Start Date
+          <input type="date" [(ngModel)]="startDate" />
+        </label>
+
+        <label>
+          End Date
+          <input type="date" [(ngModel)]="endDate" />
+        </label>
+
+        <button (click)="runBacktest()" [disabled]="loading">
+          {{ loading ? 'Running…' : 'Run Backtest' }}
+        </button>
+      </div>
+    </div>
+
+    <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+    <div class="results" *ngIf="result">
+      <div class="results-header">
+        <h2>{{ result.ticker }} <span class="dash">—</span> {{ result.strategy }}</h2>
+      </div>
+
+      <div class="metrics-grid">
+        <div class="metric">
+          <span class="label">Total Return</span>
+          <span class="value" [class.positive]="result.metrics.total_return >= 0" [class.negative]="result.metrics.total_return < 0">
+            {{ result.metrics.total_return }}%
+          </span>
+        </div>
+        <div class="metric">
+          <span class="label">CAGR</span>
+          <span class="value">{{ result.metrics.cagr }}%</span>
+        </div>
+        <div class="metric">
+          <span class="label">Sharpe Ratio</span>
+          <span class="value">{{ result.metrics.sharpe_ratio }}</span>
+        </div>
+        <div class="metric">
+          <span class="label">Max Drawdown</span>
+          <span class="value negative">-{{ result.metrics.max_drawdown }}%</span>
+        </div>
+        <div class="metric">
+          <span class="label">Final Value</span>
+          <span class="value">${{ result.metrics.final_value | number:'1.2-2' }}</span>
+        </div>
+        <div class="metric">
+          <span class="label">Completed Trades</span>
+          <span class="value">{{ result.completed_trades }}</span>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <h3>Portfolio Value Over Time</h3>
+        <div class="chart-wrap">
+          <canvas #portfolioChart></canvas>
+        </div>
+      </div>
+
+      <div class="trade-log-card" *ngIf="result.trade_log.length">
+        <h3>Trade Log</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Entry Date</th>
+              <th>Entry Price</th>
+              <th>Exit Date</th>
+              <th>Exit Price</th>
+              <th>Shares</th>
+              <th>P&amp;L</th>
+              <th>P&amp;L %</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let t of result.trade_log" [class.win]="t.pnl >= 0" [class.loss]="t.pnl < 0">
+              <td>{{ t.entry_date }}</td>
+              <td>${{ t.entry_price | number:'1.2-2' }}</td>
+              <td>{{ t.exit_date }}</td>
+              <td>${{ t.exit_price | number:'1.2-2' }}</td>
+              <td>{{ t.shares }}</td>
+              <td class="pnl-cell">{{ t.pnl >= 0 ? '+' : '' }}${{ t.pnl | number:'1.2-2' }}</td>
+              <td class="pnl-cell">{{ t.pnl_pct >= 0 ? '+' : '' }}{{ t.pnl_pct }}%</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="no-trades" *ngIf="!result.trade_log.length">No completed trades in this period.</p>
+    </div>
+  </div>
+</div>
