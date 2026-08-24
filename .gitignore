@@ -2,7 +2,6 @@ venv/
 __pycache__/
 *.pyc
 *.png
+!screenshots/*.png
 .DS_Store
-
-
 backend/config.py
