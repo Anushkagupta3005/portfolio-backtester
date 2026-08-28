@@ -1,47 +1,193 @@
 <div class="page">
   <div class="container">
     <header class="page-header">
-      <h1>Portfolio Backtester</h1>
-      <p class="subtitle">Strategy-agnostic backtesting engine — SMA · RSI · Buy &amp; Hold</p>
+      <div class="header-top">
+        <div>
+          <h1>Basis</h1>
+          <p class="subtitle">Strategy-agnostic backtesting engine — SMA · RSI · Buy &amp; Hold</p>
+        </div>
+        <span class="last-run-badge">
+          <span class="last-run-dot"></span>
+          {{ lastRunLabel }}
+        </span>
+      </div>
     </header>
 
-    <div class="form-card">
-      <div class="form-row">
-        <label>
-          Ticker
-          <select [(ngModel)]="selectedTicker">
-            <option *ngFor="let t of tickers" [value]="t">{{ t }}</option>
-          </select>
-        </label>
+    <div class="tab-nav">
+      <button class="tab-btn" [class.active]="activeTab === 'run'" (click)="setTab('run')">Run Backtest</button>
+      <button class="tab-btn" [class.active]="activeTab === 'compare'" (click)="setTab('compare')">Compare Strategies</button>
+      <button class="tab-btn" [class.active]="activeTab === 'history'" (click)="setTab('history')">History</button>
+    </div>
 
-        <label>
-          Strategy
-          <select [(ngModel)]="selectedStrategy">
-            <option *ngFor="let s of strategies" [value]="s">{{ s }}</option>
-          </select>
-        </label>
+    <ng-container *ngIf="activeTab === 'run'">
 
-        <label>
-          Start Date
-          <input type="date" [(ngModel)]="startDate" />
-        </label>
-
-        <label>
-          End Date
-          <input type="date" [(ngModel)]="endDate" />
-        </label>
-
-        <button (click)="runBacktest()" [disabled]="loading">
-          {{ loading ? 'Running…' : 'Run Backtest' }}
-        </button>
-      </div>
+    <div class="control-bar">
+      <label>
+        Ticker
+        <select [(ngModel)]="selectedTicker">
+          <option *ngFor="let t of tickers" [value]="t">{{ t }}</option>
+        </select>
+      </label>
+      <label>
+        Strategy
+        <select [(ngModel)]="selectedStrategy">
+          <option *ngFor="let s of strategies" [value]="s">{{ s }}</option>
+        </select>
+      </label>
+      <label>
+        Start
+        <input type="date" [(ngModel)]="startDate" />
+      </label>
+      <label>
+        End
+        <input type="date" [(ngModel)]="endDate" />
+      </label>
+      <button (click)="runBacktest()" [disabled]="loading">
+        {{ loading ? 'Running…' : 'Run Backtest' }}
+      </button>
     </div>
 
     <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
 
+    <!-- empty state: strategy explainer cards, shown before the first run
+         and hidden once a result or a loading skeleton is on screen -->
+    <div class="explorer" *ngIf="!result && !loading">
+      <div class="explorer-tabs">
+        <button class="explorer-tab" [class.active]="explorerTab === 'picks'" (click)="explorerTab = 'picks'">Quick picks</button>
+        <button class="explorer-tab" [class.active]="explorerTab === 'how'" (click)="explorerTab = 'how'">How it works</button>
+        <button class="explorer-tab" [class.active]="explorerTab === 'preview'" (click)="explorerTab = 'preview'">Result preview</button>
+      </div>
+
+      <div class="explorer-panel" *ngIf="explorerTab === 'picks'">
+        <div class="quick-ticker-row">
+          <span class="quick-ticker-label">Start with a ticker</span>
+          <div class="ticker-pills">
+            <button
+              class="ticker-pill"
+              *ngFor="let t of tickers"
+              [class.selected]="t === selectedTicker"
+              (click)="selectedTicker = t"
+            >{{ t }}</button>
+          </div>
+        </div>
+
+        <div class="strategy-intro">
+          <div class="strategy-card" [class.selected]="selectedStrategy === 'SMA'" (click)="selectedStrategy = 'SMA'">
+            <div class="strategy-card-head">
+              <h3>SMA Crossover</h3>
+              <span class="strategy-check" *ngIf="selectedStrategy === 'SMA'">✓</span>
+            </div>
+            <span class="strategy-tag">Trend capture</span>
+            <p>Follows the 50-day average crossing the 200-day. Buys on a Golden Cross, sells on a Death Cross.</p>
+          </div>
+          <div class="strategy-card" [class.selected]="selectedStrategy === 'RSI'" (click)="selectedStrategy = 'RSI'">
+            <div class="strategy-card-head">
+              <h3>RSI</h3>
+              <span class="strategy-check" *ngIf="selectedStrategy === 'RSI'">✓</span>
+            </div>
+            <span class="strategy-tag">Mean reversion</span>
+            <p>Buys oversold dips, sells overbought peaks. Looked perfect on AAPL alone — until tested on 9 tickers.</p>
+            <span class="strategy-badge">⚠ Sharpe collapses to 0.12 outside a strong uptrend — see Compare Strategies</span>
+          </div>
+          <div class="strategy-card" [class.selected]="selectedStrategy === 'Buy & Hold'" (click)="selectedStrategy = 'Buy & Hold'">
+            <div class="strategy-card-head">
+              <h3>Buy &amp; Hold</h3>
+              <span class="strategy-check" *ngIf="selectedStrategy === 'Buy & Hold'">✓</span>
+            </div>
+            <span class="strategy-tag">Stay invested</span>
+            <p>Buys once, holds forever. The baseline every strategy above has to actually beat.</p>
+          </div>
+        </div>
+
+        <div class="selected-setup-bar">
+          <span>Selected setup: <strong>{{ selectedTicker || '—' }}</strong> × <strong>{{ selectedStrategy || '—' }}</strong></span>
+        </div>
+      </div>
+
+      <div class="explorer-panel explorer-how" *ngIf="explorerTab === 'how'">
+        <div class="how-step">
+          <div class="how-badge">1</div>
+          <div>
+            <h4>Pick a ticker and strategy</h4>
+            <p>Choose from 9 tickers spanning sectors — tech, banking, energy, consumer staples, healthcare, industrials, media.</p>
+          </div>
+        </div>
+        <div class="how-step">
+          <div class="how-badge">2</div>
+          <div>
+            <h4>Run against real historical data</h4>
+            <p>Simulates a $100,000 portfolio trading on that strategy's signals, long-only, no shorting.</p>
+          </div>
+        </div>
+        <div class="how-step">
+          <div class="how-badge">3</div>
+          <div>
+            <h4>See risk-adjusted performance</h4>
+            <p>Not just returns — Sharpe ratio, max drawdown, and volatility, the numbers that separate skill from luck.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="explorer-panel explorer-preview" *ngIf="explorerTab === 'preview'">
+        <p class="preview-caption">Portfolio value</p>
+        <svg viewBox="0 0 400 100" class="preview-svg">
+          <polyline points="0,80 40,70 80,75 120,50 160,55 200,30 240,35 280,20 320,25 360,10 400,15" fill="none" stroke="#3b82f6" stroke-width="2"/>
+        </svg>
+        <p class="preview-hint">Run a backtest to see this populated with real numbers.</p>
+      </div>
+
+      <p class="strategy-hint">Try <strong>AAPL + RSI</strong> to see the classic overfitting trap for yourself — then check it against 8 other tickers in Compare Strategies.</p>
+    </div>
+
+    <!-- loading skeleton: pulsing placeholders in the same shape as the
+         real results, shown only while a run is in flight -->
+    <div class="skeleton" *ngIf="loading">
+      <div class="skeleton-line skeleton-query"></div>
+      <div class="skeleton-metrics-grid">
+        <div class="skeleton-metric" *ngFor="let i of [1,2,3,4,5,6,7]"></div>
+      </div>
+      <div class="skeleton-chart-grid">
+        <div class="skeleton-chart" *ngFor="let i of [1,2,3,4]"></div>
+      </div>
+    </div>
+
+    <!-- sticky summary bar: condensed result that stays visible while
+         scrolling through the charts/trade log below -->
+    <div class="sticky-summary" *ngIf="result">
+      <div class="sticky-summary-inner">
+        <span class="sticky-tag">{{ result.ticker }} / {{ result.strategy }}</span>
+        <span class="sticky-stat">
+          <span class="sticky-label">Return</span>
+          <span class="sticky-value" [class.positive]="result.metrics.total_return >= 0" [class.negative]="result.metrics.total_return < 0">{{ result.metrics.total_return }}%</span>
+        </span>
+        <span class="sticky-stat">
+          <span class="sticky-label">Sharpe</span>
+          <span class="sticky-value">{{ result.metrics.sharpe_ratio }}</span>
+        </span>
+        <span class="sticky-stat">
+          <span class="sticky-label">Max DD</span>
+          <span class="sticky-value negative">-{{ result.metrics.max_drawdown }}%</span>
+        </span>
+        <span class="sticky-stat">
+          <span class="sticky-label">Final Value</span>
+          <span class="sticky-value">${{ result.metrics.final_value | number:'1.0-0' }}</span>
+        </span>
+      </div>
+    </div>
+
     <div class="results" *ngIf="result">
       <div class="results-header">
-        <h2>{{ result.ticker }} <span class="dash">—</span> {{ result.strategy }}</h2>
+        <div class="query-line">
+          <span class="prompt">$</span>
+          <span class="ticker">{{ result.ticker }}</span>
+          <span class="sep">/</span>
+          <span>{{ result.strategy }}</span>
+          <span class="sep">/</span>
+          <span>{{ startDate || 'inception' }} → {{ endDate || 'latest' }}</span>
+        </div>
+        <button class="save-btn" [class.saved]="runSaved" (click)="saveRunToHistory()" [disabled]="runSaving || runSaved">
+          {{ runSaved ? 'Saved' : (runSaving ? 'Saving…' : 'Save to History') }}
+        </button>
       </div>
 
       <div class="metrics-grid">
@@ -64,6 +210,10 @@
           <span class="value negative">-{{ result.metrics.max_drawdown }}%</span>
         </div>
         <div class="metric">
+          <span class="label">Volatility</span>
+          <span class="value">{{ result.metrics.volatility }}%</span>
+        </div>
+        <div class="metric">
           <span class="label">Final Value</span>
           <span class="value">${{ result.metrics.final_value | number:'1.2-2' }}</span>
         </div>
@@ -73,15 +223,62 @@
         </div>
       </div>
 
-      <div class="chart-card">
-        <h3>Portfolio Value Over Time</h3>
-        <div class="chart-wrap">
-          <canvas #portfolioChart></canvas>
+      <div class="chart-grid">
+        <div class="chart-card">
+          <h3>Portfolio Value</h3>
+          <div class="chart-wrap">
+            <canvas #portfolioChart></canvas>
+          </div>
         </div>
+
+        <div class="chart-card">
+          <h3>Drawdown</h3>
+          <div class="chart-wrap">
+            <canvas #drawdownChart></canvas>
+          </div>
+        </div>
+
+        <div class="chart-card">
+          <h3>Price &amp; Signals</h3>
+          <div class="chart-wrap">
+            <canvas #priceChart></canvas>
+          </div>
+        </div>
+
+        <div class="chart-card" *ngIf="result.strategy === 'RSI'; else tradeSplitCard">
+          <h3>RSI (14)</h3>
+          <div class="chart-wrap">
+            <canvas #rsiChart></canvas>
+          </div>
+        </div>
+
+        <!-- non-RSI strategies don't have an RSI series, so the 4th grid
+             slot shows a win/loss trade breakdown instead of an empty panel -->
+        <ng-template #tradeSplitCard>
+          <div class="chart-card">
+            <h3>Win / Loss Breakdown</h3>
+            <div class="trade-split" *ngIf="result.completed_trades > 0; else noSplit">
+              <div class="split-row">
+                <span class="split-label wins">Wins</span>
+                <span class="split-value">{{ winCount }}</span>
+              </div>
+              <div class="split-row">
+                <span class="split-label losses">Losses</span>
+                <span class="split-value">{{ result.completed_trades - winCount }}</span>
+              </div>
+            </div>
+            <ng-template #noSplit>
+              <p class="no-trades">No completed trades to summarize.</p>
+            </ng-template>
+          </div>
+        </ng-template>
       </div>
 
       <div class="trade-log-card" *ngIf="result.trade_log.length">
-        <h3>Trade Log</h3>
+        <div class="trade-log-header">
+          <h3>Trade Log</h3>
+          <button class="csv-btn" (click)="downloadCsv()">Download CSV</button>
+        </div>
         <table>
           <thead>
             <tr>
@@ -107,8 +304,160 @@
           </tbody>
         </table>
       </div>
-
       <p class="no-trades" *ngIf="!result.trade_log.length">No completed trades in this period.</p>
     </div>
+
+    </ng-container>
+
+    <ng-container *ngIf="activeTab === 'compare'">
+
+    <div class="control-bar">
+      <label>
+        Ticker
+        <select [(ngModel)]="compareTicker">
+          <option *ngFor="let t of tickers" [value]="t">{{ t }}</option>
+        </select>
+      </label>
+      <label>
+        Start
+        <input type="date" [(ngModel)]="compareStartDate" />
+      </label>
+      <label>
+        End
+        <input type="date" [(ngModel)]="compareEndDate" />
+      </label>
+      <button (click)="runCompare()" [disabled]="compareLoading">
+        {{ compareLoading ? 'Comparing…' : 'Compare' }}
+      </button>
+    </div>
+
+    <p class="error" *ngIf="compareErrorMessage">{{ compareErrorMessage }}</p>
+
+    <div class="results" *ngIf="compareResult">
+      <div class="results-header">
+        <div class="query-line">
+          <span class="prompt">$</span>
+          <span class="ticker">{{ compareResult.ticker }}</span>
+          <span class="sep">/</span>
+          <span>SMA vs RSI vs Buy &amp; Hold</span>
+          <span class="sep">/</span>
+          <span>{{ compareStartDate || 'inception' }} → {{ compareEndDate || 'latest' }}</span>
+        </div>
+        <button class="save-btn" [class.saved]="compareSaved" (click)="saveCompareToHistory()" [disabled]="compareSaving || compareSaved">
+          {{ compareSaved ? 'Saved' : (compareSaving ? 'Saving…' : 'Save All to History') }}
+        </button>
+      </div>
+
+      <p class="error" *ngIf="compareFailedStrategies.length">
+        Not enough data in this range for: {{ compareFailedStrategies.join(', ') }}. Try a wider date range.
+      </p>
+
+      <div class="chart-card compare-chart-card">
+        <h3>Portfolio Value — All Strategies</h3>
+        <div class="chart-wrap compare-chart-wrap">
+          <canvas #compareChart></canvas>
+        </div>
+      </div>
+
+      <div class="leaderboard">
+        <div
+          class="leaderboard-card"
+          *ngFor="let name of compareRankedStrategies; let i = index"
+        >
+          <div class="leaderboard-rank">#{{ i + 1 }}</div>
+          <div class="leaderboard-name">{{ name }}</div>
+          <div class="leaderboard-stats">
+            <div class="lb-stat">
+              <span class="lb-label">Return</span>
+              <span
+                class="lb-value"
+                [class.positive]="compareResult.results[name].metrics.total_return >= 0"
+                [class.negative]="compareResult.results[name].metrics.total_return < 0"
+              >{{ compareResult.results[name].metrics.total_return }}%</span>
+            </div>
+            <div class="lb-stat">
+              <span class="lb-label">CAGR</span>
+              <span class="lb-value">{{ compareResult.results[name].metrics.cagr }}%</span>
+            </div>
+            <div class="lb-stat">
+              <span class="lb-label">Sharpe</span>
+              <span class="lb-value">{{ compareResult.results[name].metrics.sharpe_ratio }}</span>
+            </div>
+            <div class="lb-stat">
+              <span class="lb-label">Max DD</span>
+              <span class="lb-value negative">-{{ compareResult.results[name].metrics.max_drawdown }}%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    </ng-container>
+
+    <ng-container *ngIf="activeTab === 'history'">
+
+    <p class="error" *ngIf="historyErrorMessage">{{ historyErrorMessage }}</p>
+
+    <div class="history-list" *ngIf="!historyLoading && historyRuns.length">
+      <div class="history-row" *ngFor="let run of historyRuns">
+        <div class="history-main">
+          <div class="query-line small">
+            <span class="prompt">$</span>
+            <span class="ticker">{{ run.ticker }}</span>
+            <span class="sep">/</span>
+            <span>{{ run.strategy }}</span>
+            <span class="sep">/</span>
+            <span>{{ run.start_date || 'inception' }} → {{ run.end_date || 'latest' }}</span>
+          </div>
+          <span class="history-timestamp">{{ run.created_at }}</span>
+        </div>
+
+        <div class="history-stats">
+          <div class="hs-stat">
+            <span class="hs-label">Return</span>
+            <span class="hs-value" [class.positive]="run.total_return >= 0" [class.negative]="run.total_return < 0">{{ run.total_return }}%</span>
+          </div>
+          <div class="hs-stat">
+            <span class="hs-label">CAGR</span>
+            <span class="hs-value">{{ run.cagr }}%</span>
+          </div>
+          <div class="hs-stat">
+            <span class="hs-label">Sharpe</span>
+            <span class="hs-value">{{ run.sharpe_ratio }}</span>
+          </div>
+          <div class="hs-stat">
+            <span class="hs-label">Max DD</span>
+            <span class="hs-value negative">-{{ run.max_drawdown }}%</span>
+          </div>
+          <div class="hs-stat">
+            <span class="hs-label">Final Value</span>
+            <span class="hs-value">${{ run.final_value | number:'1.2-2' }}</span>
+          </div>
+        </div>
+
+        <div class="history-note">
+          <ng-container *ngIf="editingNoteId === run.id; else noteDisplay">
+            <textarea class="note-input" [(ngModel)]="editingNoteText" rows="2" placeholder="Add a note..."></textarea>
+            <div class="note-actions">
+              <button class="note-btn save" (click)="saveNote(run)">Save</button>
+              <button class="note-btn cancel" (click)="cancelEditingNote()">Cancel</button>
+            </div>
+          </ng-container>
+          <ng-template #noteDisplay>
+            <p class="note-text" *ngIf="run.note" (click)="startEditingNote(run)">{{ run.note }}</p>
+            <button class="note-btn add" *ngIf="!run.note" (click)="startEditingNote(run)">+ Add note</button>
+          </ng-template>
+        </div>
+
+        <button class="delete-btn" (click)="deleteRun(run)" title="Delete this run">×</button>
+      </div>
+    </div>
+
+    <p class="no-trades" *ngIf="!historyLoading && !historyRuns.length">
+      No saved runs yet. Run a backtest and click "Save to History" to keep it here.
+    </p>
+
+    </ng-container>
+
   </div>
 </div>
