@@ -1124,3 +1124,78 @@ tr.loss .pnl-cell { color: #f87171; font-weight: 600; }
 .strategy-hint strong {
   color: #d1d5db;
 }
+
+/* ── add ticker ── */
+.add-ticker-pill {
+  border-style: dashed;
+  color: #7b8494;
+  background: transparent;
+}
+
+.add-ticker-pill:hover {
+  color: #93c5fd;
+  border-color: #3b82f6;
+}
+
+.add-ticker-form {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.add-ticker-input {
+  background: #0e131b;
+  border: 1px solid #2a3342;
+  border-radius: 8px;
+  padding: 0.5rem 0.8rem;
+  font-size: 0.82rem;
+  color: #e6e8ec;
+  width: 140px;
+  text-transform: uppercase;
+}
+
+.add-ticker-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+}
+
+.add-ticker-input:disabled {
+  opacity: 0.6;
+}
+
+.add-ticker-btn {
+  padding: 0.5rem 1.1rem;
+  background: #3b82f6;
+  color: #0a0e14;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.add-ticker-btn:disabled {
+  background: #232b39;
+  color: #6b7280;
+  cursor: not-allowed;
+}
+
+.add-ticker-hint {
+  font-size: 0.75rem;
+  color: #7b8494;
+  margin: 0;
+}
+
+.add-ticker-error {
+  font-size: 0.78rem;
+  color: #f87171;
+  margin: 0.6rem 0 0;
+}
+
+.add-ticker-success {
+  font-size: 0.78rem;
+  color: #4ade80;
+  margin: 0.6rem 0 0;
+}

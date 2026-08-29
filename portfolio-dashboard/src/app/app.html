@@ -68,7 +68,28 @@
               [class.selected]="t === selectedTicker"
               (click)="selectedTicker = t"
             >{{ t }}</button>
+            <button class="ticker-pill add-ticker-pill" (click)="toggleAddTicker()">
+              {{ showAddTicker ? '× Cancel' : '+ Add ticker' }}
+            </button>
           </div>
+
+          <div class="add-ticker-form" *ngIf="showAddTicker">
+            <input
+              type="text"
+              class="add-ticker-input"
+              placeholder="e.g. GOOGL"
+              [(ngModel)]="newTickerSymbol"
+              (keyup.enter)="addNewTicker()"
+              [disabled]="addingTicker"
+              maxlength="8"
+            />
+            <button class="add-ticker-btn" (click)="addNewTicker()" [disabled]="addingTicker || !newTickerSymbol.trim()">
+              {{ addingTicker ? 'Fetching…' : 'Add' }}
+            </button>
+            <span class="add-ticker-hint" *ngIf="addingTicker">Pulling historical data — this can take a few seconds.</span>
+          </div>
+          <p class="add-ticker-error" *ngIf="addTickerError">{{ addTickerError }}</p>
+          <p class="add-ticker-success" *ngIf="addTickerSuccess">{{ addTickerSuccess }}</p>
         </div>
 
         <div class="strategy-intro">

@@ -95,6 +95,14 @@ export interface SaveHistoryPayload {
   note?: string;
 }
 
+export interface AddTickerResult {
+  ticker: string;
+  rows_loaded: number;
+  start_date: string;
+  end_date: string;
+  added: boolean;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -105,6 +113,13 @@ export class BacktestService {
 
   getTickers(): Observable<{ tickers: string[] }> {
     return this.http.get<{ tickers: string[] }>(`${this.baseUrl}/tickers`);
+  }
+
+  addTicker(ticker: string, startDate?: string, endDate?: string): Observable<AddTickerResult> {
+    const body: any = { ticker };
+    if (startDate) body.start_date = startDate;
+    if (endDate) body.end_date = endDate;
+    return this.http.post<AddTickerResult>(`${this.baseUrl}/tickers`, body);
   }
 
   getStrategies(): Observable<{ strategies: string[] }> {

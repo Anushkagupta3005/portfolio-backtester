@@ -64,6 +64,13 @@ export class App implements OnInit {
   editingNoteId: number | null = null;
   editingNoteText = '';
 
+  // Add Ticker state (Quick Picks panel)
+  showAddTicker = false;
+  newTickerSymbol = '';
+  addingTicker = false;
+  addTickerError = '';
+  addTickerSuccess = '';
+
   private portfolioChart: Chart | null = null;
   private drawdownChart: Chart | null = null;
   private priceChart: Chart | null = null;
@@ -268,6 +275,38 @@ export class App implements OnInit {
       },
       error: () => {
         this.historyErrorMessage = 'Could not delete this run.';
+      }
+    });
+  }
+
+  toggleAddTicker(): void {
+    this.showAddTicker = !this.showAddTicker;
+    this.addTickerError = '';
+    this.addTickerSuccess = '';
+  }
+
+  addNewTicker(): void {
+    const symbol = this.newTickerSymbol.trim().toUpperCase();
+    if (!symbol || this.addingTicker) return;
+
+    this.addingTicker = true;
+    this.addTickerError = '';
+    this.addTickerSuccess = '';
+
+    this.backtestService.addTicker(symbol).subscribe({
+      next: (res) => {
+        this.addingTicker = false;
+        this.addTickerSuccess = `${res.ticker} added — ${res.rows_loaded} days of data loaded.`;
+        this.newTickerSymbol = '';
+        // fold the new ticker straight into the dropdown lists so it's
+        // immediately usable without a manual page refresh
+        if (!this.tickers.includes(res.ticker)) {
+          this.tickers = [...this.tickers, res.ticker].sort();
+        }
+      },
+      error: (err: any) => {
+        this.addingTicker = false;
+        this.addTickerError = err?.error?.error || `Could not add ${symbol}. Check the symbol and try again.`;
       }
     });
   }

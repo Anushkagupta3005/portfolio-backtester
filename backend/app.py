@@ -21,12 +21,14 @@ Usage:
 
 import numpy as np
 import pandas as pd
+from datetime import date
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 
 from backtest import BacktestEngine, load_prices, compute_sma_signals
 from metrics import compute_buyhold_signals, compute_metrics
 from rsi_strategy import compute_signals as compute_rsi_signals
+from data.ingest import fetch_price_data, clean_price_data, upsert_price_data
 from config import DB_CONFIG
 
 import mysql.connector
@@ -213,6 +215,50 @@ def api_tickers():
         return jsonify({"tickers": get_available_tickers()})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/tickers", methods=["POST"])
+def api_add_ticker():
+    """
+    Add a new ticker to price_history by reusing ingest.py's actual
+    fetch/clean/upsert pipeline (same functions, same behavior as
+    running `python -m data.ingest TICKER START END` from the terminal)
+    -- this endpoint is just an HTTP front door onto that existing,
+    already-validated logic, not a reimplementation of it.
+
+    Defaults the date range to 2018-01-01 through today if not given,
+    matching the range every other ticker in the project was ingested
+    with, so a newly added ticker lines up with the rest for Compare
+    Strategies and multi-ticker analysis.
+    """
+    data = request.get_json(force=True)
+
+    ticker = data.get("ticker")
+    if not ticker:
+        return jsonify({"error": "'ticker' is required."}), 400
+    ticker = ticker.strip().upper()
+
+    start_date = data.get("start_date") or "2018-01-01"
+    end_date = data.get("end_date") or date.today().isoformat()
+
+    try:
+        df = fetch_price_data(ticker, start_date, end_date)
+        df = clean_price_data(df)
+        upsert_price_data(df, ticker)
+    except ValueError as e:
+        # fetch_price_data raises ValueError for an empty/invalid ticker
+        # -- this is a person-facing input error, not a server fault
+        return jsonify({"error": str(e)}), 400
+    except Exception as e:
+        return jsonify({"error": f"Could not fetch or save data for {ticker}: {e}"}), 500
+
+    return jsonify({
+        "ticker": ticker,
+        "rows_loaded": len(df),
+        "start_date": start_date,
+        "end_date": end_date,
+        "added": True,
+    }), 201
 
 
 @app.route("/api/strategies", methods=["GET"])
