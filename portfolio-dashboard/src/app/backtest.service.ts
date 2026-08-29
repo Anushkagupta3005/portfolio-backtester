@@ -103,6 +103,35 @@ export interface AddTickerResult {
   added: boolean;
 }
 
+// ── Risk Analytics / Monte Carlo ──
+
+export interface MonteCarloRequest {
+  ticker: string;
+  days: number;
+  num_simulations: number;
+  target_price?: number;
+}
+
+export interface MonteCarloResults {
+  ticker: string;
+  start_price: number;
+  days_simulated: number;
+  num_simulations: number;
+  estimated_annual_drift: number;
+  estimated_annual_volatility: number;
+  mean_ending_price: number;
+  median_ending_price: number;
+  percentile_5: number;
+  percentile_95: number;
+  target_price?: number;
+  probability_above_target?: number;
+}
+
+export interface MonteCarloResponse {
+  results: MonteCarloResults;
+  chart_paths: number[][]; // [day][simulation] -> price
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -154,5 +183,9 @@ export class BacktestService {
 
   deleteHistoryRun(id: number): Observable<{ id: number; deleted: boolean }> {
     return this.http.delete<{ id: number; deleted: boolean }>(`${this.baseUrl}/history/${id}`);
+  }
+
+  runMonteCarlo(request: MonteCarloRequest): Observable<MonteCarloResponse> {
+    return this.http.post<MonteCarloResponse>(`${this.baseUrl}/monte-carlo`, request);
   }
 }

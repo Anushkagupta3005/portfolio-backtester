@@ -1,7 +1,7 @@
 import { Component, OnInit, ElementRef, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { BacktestService, BacktestResult, CompareResult, HistoryRun, MonteCarloResponse } from './backtest.service';
+import { BacktestService, BacktestResult, CompareResult, HistoryRun } from './backtest.service';
 import { Chart, registerables } from 'chart.js';
 
 Chart.register(...registerables);
@@ -21,10 +21,8 @@ export class App implements OnInit {
   @ViewChild('rsiChart') rsiCanvas?: ElementRef<HTMLCanvasElement>;
   // canvas for the Compare Strategies overlay chart
   @ViewChild('compareChart') compareCanvas?: ElementRef<HTMLCanvasElement>;
-  // canvas for the Risk Analytics / Monte Carlo fan chart
-  @ViewChild('fanChart') fanChartCanvas?: ElementRef<HTMLCanvasElement>;
 
-  activeTab: 'run' | 'compare' | 'history' | 'risk' = 'run';
+  activeTab: 'run' | 'compare' | 'history' = 'run';
 
   // sub-tab within the pre-run explorer panel (Quick picks / How it works / Result preview)
   explorerTab: 'picks' | 'how' | 'preview' = 'picks';
@@ -73,23 +71,11 @@ export class App implements OnInit {
   addTickerError = '';
   addTickerSuccess = '';
 
-  // Risk Analytics / Monte Carlo tab state -- separate from the other
-  // tabs' state for the same reason Compare's state is separate: each
-  // tab runs independently and switching away shouldn't clear results
-  mcTicker = '';
-  mcDays = 252;
-  mcNumSimulations = 1000;
-  mcTargetPrice: number | null = null;
-  mcResult: MonteCarloResponse | null = null;
-  mcLoading = false;
-  mcErrorMessage = '';
-
   private portfolioChart: Chart | null = null;
   private drawdownChart: Chart | null = null;
   private priceChart: Chart | null = null;
   private rsiChart: Chart | null = null;
   private compareChart: Chart | null = null;
-  private mcFanChart: Chart | null = null;
 
   constructor(
     private backtestService: BacktestService,
@@ -103,7 +89,6 @@ export class App implements OnInit {
         if (this.tickers.length) {
           this.selectedTicker = this.tickers[0];
           this.compareTicker = this.tickers[0];
-          this.mcTicker = this.tickers[0];
         }
       },
       error: () => {
@@ -154,17 +139,13 @@ export class App implements OnInit {
     return `Last run: ${diffDay}d ago`;
   }
 
-  setTab(tab: 'run' | 'compare' | 'history' | 'risk'): void {
+  setTab(tab: 'run' | 'compare' | 'history'): void {
     this.activeTab = tab;
     // the compare canvas only exists in the DOM once its tab is active
     // and compareResult is set, so redraw when switching back to it
     if (tab === 'compare' && this.compareResult) {
       this.cdr.detectChanges();
       requestAnimationFrame(() => this.drawCompareChart());
-    }
-    if (tab === 'risk' && this.mcResult) {
-      this.cdr.detectChanges();
-      requestAnimationFrame(() => this.drawFanChart());
     }
     if (tab === 'history') {
       this.loadHistory();
@@ -813,89 +794,6 @@ export class App implements OnInit {
             borderWidth: 1,
             titleColor: '#e5e7eb',
             bodyColor: '#e5e7eb'
-          }
-        }
-      }
-    });
-  }
-
-  // ── Risk Analytics / Monte Carlo ──
-
-  runMonteCarlo(): void {
-    if (!this.mcTicker) return;
-
-    this.mcLoading = true;
-    this.mcErrorMessage = '';
-    this.mcResult = null;
-    this.mcFanChart?.destroy();
-    this.mcFanChart = null;
-
-    this.backtestService.runMonteCarlo({
-      ticker: this.mcTicker,
-      days: this.mcDays,
-      num_simulations: this.mcNumSimulations,
-      target_price: this.mcTargetPrice ?? undefined
-    }).subscribe({
-      next: (res: MonteCarloResponse) => {
-        this.mcResult = res;
-        this.mcLoading = false;
-        // same DOM-not-ready-yet fix already used for the compare chart
-        this.cdr.detectChanges();
-        requestAnimationFrame(() => this.drawFanChart());
-      },
-      error: (err: any) => {
-        this.mcErrorMessage = err?.error?.error || 'Something went wrong running the simulation.';
-        this.mcLoading = false;
-      }
-    });
-  }
-
-  private drawFanChart(): void {
-    if (!this.mcResult || !this.fanChartCanvas) return;
-
-    const paths = this.mcResult.chart_paths; // [day][simulation]
-    const numDays = paths.length;
-    const labels = Array.from({ length: numDays }, (_, i) => i.toString());
-    const numPaths = paths[0]?.length ?? 0;
-
-    // one translucent dataset per simulated path -- overlapping lines form
-    // the fan shape. legend/tooltip off since ~100 dataset entries would
-    // be unreadable either way
-    const datasets = [];
-    for (let simIndex = 0; simIndex < numPaths; simIndex++) {
-      datasets.push({
-        data: paths.map(dayRow => dayRow[simIndex]),
-        borderColor: 'rgba(59, 130, 246, 0.12)',
-        borderWidth: 1,
-        pointRadius: 0,
-        fill: false,
-        tension: 0.1
-      });
-    }
-
-    this.mcFanChart = new Chart(this.fanChartCanvas.nativeElement, {
-      type: 'line',
-      data: { labels, datasets },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { display: false },
-          tooltip: { enabled: false }
-        },
-        scales: {
-          x: {
-            ticks: { maxTicksLimit: 10, color: '#7b8494' },
-            grid: { display: false },
-            border: { color: '#232b39' }
-          },
-          y: {
-            ticks: {
-              color: '#7b8494',
-              callback: (value) => '$' + Number(value).toLocaleString()
-            },
-            grid: { color: '#1e2531' },
-            border: { color: '#232b39' }
           }
         }
       }
