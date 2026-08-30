@@ -19,30 +19,34 @@
 .container {
   max-width: 1320px;
   margin: 0 auto;
-  padding: 2.5rem 2rem 5rem;
+  padding: 1.6rem 1.6rem 3rem;
 }
 
-/* ── header ── */
+/* ── header (shrunk hero — logo + subtitle now sit inline) ── */
 .page-header {
-  margin-bottom: 1.75rem;
-  padding-bottom: 1.5rem;
+  display: flex;
+  align-items: baseline;
+  gap: 0.9rem;
+  margin-bottom: 0.9rem;
+  padding-bottom: 0.5rem;
   border-bottom: 2px solid #fd9e28;
 }
 
 .page-header h1 {
   font-family: 'Joystix', monospace;
-  font-size: 4.2rem;
-  font-weight: normal;
-  margin: 0 0 0.6rem;
+  font-size: 1.6rem;
+  font-weight: bold;
+  margin: 0;
   letter-spacing: 0.02em;
   color: #fd9e28;
   text-transform: uppercase;
   line-height: 1;
+  text-shadow: 0.5px 0 0 currentColor, -0.5px 0 0 currentColor, 0 0.5px 0 currentColor, 0 -0.5px 0 currentColor;
 }
 
 .subtitle {
   color: #7a9cb5;
-  font-size: 0.82rem;
+  font-size: 0.7rem;
   margin: 0;
   font-family: 'JetBrains Mono', monospace;
   letter-spacing: 0.02em;
@@ -53,11 +57,11 @@
   display: flex;
   flex-wrap: wrap;
   align-items: flex-end;
-  gap: 1.1rem;
+  gap: 0.9rem;
   background: #0d2131;
   border: 1px solid #1a3548;
-  padding: 1.1rem 1.4rem;
-  margin-bottom: 1.75rem;
+  padding: 0.8rem 1rem;
+  margin-bottom: 1.1rem;
 }
 
 .control-bar label {
@@ -126,16 +130,16 @@
 
 /* ── query line ── */
 .results-header {
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.9rem;
 }
 
 .query-line {
   display: inline-flex;
   align-items: center;
-  gap: 0.55rem;
+  gap: 0.5rem;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 0.9rem;
-  padding: 0.55rem 1rem;
+  font-size: 0.85rem;
+  padding: 0.4rem 0.85rem;
   background: #0d2131;
   border: 1px solid #1a3548;
   color: #7a9cb5;
@@ -152,15 +156,15 @@
   gap: 1px;
   background: #1a3548;
   border: 1px solid #1a3548;
-  margin-bottom: 1.75rem;
+  margin-bottom: 1.1rem;
 }
 
 .metric {
   display: flex;
   flex-direction: column;
-  padding: 1.15rem 1.3rem;
+  padding: 0.75rem 1rem;
   background: #0d2131;
-  gap: 0.4rem;
+  gap: 0.3rem;
   transition: background 0.15s;
 }
 
@@ -206,13 +210,13 @@
 
 .chart-card {
   background: #0d2131;
-  padding: 1.3rem 1.4rem;
+  padding: 0.9rem 1.1rem;
 }
 
 .chart-card h3 {
   font-size: 0.72rem;
   font-weight: 700;
-  margin: 0 0 1rem;
+  margin: 0 0 0.6rem;
   color: #7a9cb5;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -220,7 +224,7 @@
 }
 
 .chart-wrap {
-  height: 240px;
+  height: 200px;
   position: relative;
 }
 
@@ -340,37 +344,44 @@ tr.loss .pnl-cell { color: #e05c5c; font-weight: 700; }
   font-family: 'JetBrains Mono', monospace;
 }
 
-/* ── tab navigation ── */
+/* ── tab navigation (file-tab style: separate pills, active tab "connects" to panel below) ── */
 .tab-nav {
   display: flex;
-  gap: 0;
-  margin-bottom: 1.75rem;
-  background: #a51e25;
+  gap: 4px;
+  margin-bottom: 0.9rem;
+  background: transparent;
+  border-bottom: 2px solid #a51e25;
+  padding: 0 0.2rem;
 }
 
 .tab-btn {
-  flex: 1 1 0;
-  padding: 1rem 1.3rem;
-  background: transparent;
-  border: none;
-  border-bottom: 3px solid transparent;
-  color: rgba(255, 255, 255, 0.75);
+  flex: 0 1 auto;
+  padding: 0.75rem 1.2rem;
+  background: #1a0a0a;
+  border: 1px solid #a51e25;
+  border-bottom: none;
+  border-radius: 4px 4px 0 0;
+  color: rgba(255, 255, 255, 0.55);
   font-family: 'Joystix', monospace;
-  font-size: 1.05rem;
+  font-size: 0.78rem;
   cursor: pointer;
   transition: color 0.15s, background 0.15s;
   letter-spacing: 0.03em;
   text-align: center;
+  position: relative;
+  top: 2px;
 }
 
 .tab-btn:hover {
   color: #ffffff;
-  background: rgba(0, 0, 0, 0.15);
+  background: #2a1010;
 }
 
 .tab-btn.active {
   color: #fd9e28;
-  background: rgba(0, 0, 0, 0.25);
+  background: #0d2131;
+  border-color: #fd9e28;
+  border-bottom: 2px solid #0d2131;
 }
 
 /* ── compare chart card ── */
@@ -687,10 +698,10 @@ tr.loss .pnl-cell { color: #e05c5c; font-weight: 700; }
 
 .strategy-card {
   background: #0d2131;
-  padding: 1.3rem 1.4rem;
+  padding: 0.8rem 1rem;
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
+  gap: 0.4rem;
 }
 
 .strategy-card h3 {
@@ -836,7 +847,7 @@ tr.loss .pnl-cell { color: #e05c5c; font-weight: 700; }
 /* ── header with last-run badge ── */
 .header-top {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: 1rem;
   flex-wrap: wrap;
@@ -980,10 +991,10 @@ tr.loss .pnl-cell { color: #e05c5c; font-weight: 700; }
 
 .explorer-panel .strategy-card {
   background: #000000;
-  padding: 1.1rem 1.2rem;
+  padding: 0.7rem 0.9rem;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.3rem;
   cursor: pointer;
   transition: background 0.15s;
 }
@@ -1005,7 +1016,7 @@ tr.loss .pnl-cell { color: #e05c5c; font-weight: 700; }
 
 .strategy-card-head h3 {
   margin: 0;
-  font-size: 0.92rem;
+  font-size: 1.15rem;
   font-weight: 700;
   color: #f0ede5;
   font-family: 'JetBrains Mono', monospace;
@@ -1025,7 +1036,7 @@ tr.loss .pnl-cell { color: #e05c5c; font-weight: 700; }
 }
 
 .strategy-tag {
-  font-size: 0.63rem;
+  font-size: 0.78rem;
   font-weight: 700;
   color: #4a6478;
   text-transform: uppercase;
@@ -1035,14 +1046,14 @@ tr.loss .pnl-cell { color: #e05c5c; font-weight: 700; }
 
 .explorer-panel .strategy-card p {
   margin: 0;
-  font-size: 0.8rem;
-  line-height: 1.5;
+  font-size: 0.98rem;
+  line-height: 1.6;
   color: #8fa8bd;
 }
 
 .explorer-panel .strategy-badge {
   display: inline-block;
-  font-size: 0.68rem;
+  font-size: 0.82rem;
   font-weight: 700;
   color: #fd9e28;
   background: rgba(245, 166, 35, 0.1);
@@ -1251,4 +1262,129 @@ tr.loss .pnl-cell { color: #e05c5c; font-weight: 700; }
 
 .risk-model-description .subtitle {
   margin-bottom: 0;
+}
+
+/* ── Strategy card flip interaction ──
+   Replaces the flat .explorer-panel .strategy-card with a click-to-flip
+   card. Structure expected in HTML:
+   <div class="flip-card" [class.flipped]="flippedCard === 'sma'">
+     <div class="flip-card-inner">
+       <div class="flip-card-front">...</div>
+       <div class="flip-card-back">...</div>
+     </div>
+   </div>
+*/
+
+.flip-card {
+  background: transparent;
+  perspective: 1000px;
+  cursor: pointer;
+  min-height: 170px;
+}
+
+.flip-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 170px;
+  text-align: left;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+}
+
+.flip-card.flipped .flip-card-inner {
+  transform: rotateY(180deg);
+}
+
+.flip-card-front,
+.flip-card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  min-height: 170px;
+  backface-visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: 0.9rem 1rem;
+  background: #000000;
+  transition: background 0.15s;
+}
+
+.flip-card:hover .flip-card-front,
+.flip-card:hover .flip-card-back {
+  background: #123047;
+}
+
+.flip-card.selected .flip-card-front {
+  background: rgba(245, 166, 35, 0.06);
+  box-shadow: inset 0 0 0 1px #fd9e28;
+}
+
+.flip-card-back {
+  transform: rotateY(180deg);
+  background: #0d2131;
+  justify-content: center;
+}
+
+/* front face: strategy name, large, centered, Joystix */
+.flip-card-front {
+  align-items: center;
+  justify-content: center;
+  gap: 0.7rem;
+  text-align: center;
+}
+
+.flip-card-front .flip-name {
+  font-family: 'Joystix', monospace;
+  font-size: 1.5rem;
+  color: #fd9e28;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  line-height: 1.3;
+}
+
+.flip-card-front .flip-tag {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #4a6478;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.flip-card-front .flip-hint {
+  font-size: 0.68rem;
+  color: #4a6478;
+  font-family: 'JetBrains Mono', monospace;
+  margin-top: 0.4rem;
+  letter-spacing: 0.04em;
+}
+
+.flip-card-front .strategy-check {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+}
+
+/* back face: detail copy, Joystix, 4-5 lines */
+.flip-card-back .flip-back-title {
+  font-family: 'Joystix', monospace;
+  font-size: 0.95rem;
+  color: #fd9e28;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  margin-bottom: 0.7rem;
+  line-height: 1.3;
+}
+
+.flip-card-back .flip-back-text {
+  font-family: 'Joystix', monospace;
+  font-size: 0.68rem;
+  line-height: 1.9;
+  color: #c8d9e5;
+  letter-spacing: 0.01em;
+}
+
+.flip-card-back .flip-back-text strong {
+  color: #fd9e28;
 }

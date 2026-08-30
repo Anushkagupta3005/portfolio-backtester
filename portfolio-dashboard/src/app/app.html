@@ -92,31 +92,89 @@
         </div>
 
         <div class="strategy-intro">
-          <div class="strategy-card" [class.selected]="selectedStrategy === 'SMA'" (click)="selectedStrategy = 'SMA'">
-            <div class="strategy-card-head">
-              <h3>SMA Crossover</h3>
-              <span class="strategy-check" *ngIf="selectedStrategy === 'SMA'">✓</span>
+
+          <!-- SMA Crossover -->
+          <div
+            class="flip-card"
+            [class.flipped]="flippedCard === 'SMA'"
+            [class.selected]="selectedStrategy === 'SMA'"
+            (click)="selectedStrategy = 'SMA'; flippedCard = (flippedCard === 'SMA' ? null : 'SMA')"
+          >
+            <div class="flip-card-inner">
+              <div class="flip-card-front">
+                <span class="strategy-check" *ngIf="selectedStrategy === 'SMA'">✓</span>
+                <div class="flip-name">SMA<br>Crossover</div>
+                <span class="flip-tag">Trend capture</span>
+                <span class="flip-hint">click to flip</span>
+              </div>
+              <div class="flip-card-back">
+                <div class="flip-back-title">SMA Crossover</div>
+                <p class="flip-back-text">
+                  Tracks the <strong>50-day</strong> moving average against the
+                  <strong>200-day</strong>. When the shorter average crosses above
+                  the longer one — a <strong>Golden Cross</strong> — it signals an
+                  uptrend and buys in. When it crosses back below — a
+                  <strong>Death Cross</strong> — it exits. Strong in sustained
+                  trends, weak in sideways markets.
+                </p>
+              </div>
             </div>
-            <span class="strategy-tag">Trend capture</span>
-            <p>Follows the 50-day average crossing the 200-day. Buys on a Golden Cross, sells on a Death Cross.</p>
           </div>
-          <div class="strategy-card" [class.selected]="selectedStrategy === 'RSI'" (click)="selectedStrategy = 'RSI'">
-            <div class="strategy-card-head">
-              <h3>RSI</h3>
-              <span class="strategy-check" *ngIf="selectedStrategy === 'RSI'">✓</span>
+
+          <!-- RSI -->
+          <div
+            class="flip-card"
+            [class.flipped]="flippedCard === 'RSI'"
+            [class.selected]="selectedStrategy === 'RSI'"
+            (click)="selectedStrategy = 'RSI'; flippedCard = (flippedCard === 'RSI' ? null : 'RSI')"
+          >
+            <div class="flip-card-inner">
+              <div class="flip-card-front">
+                <span class="strategy-check" *ngIf="selectedStrategy === 'RSI'">✓</span>
+                <div class="flip-name">RSI</div>
+                <span class="flip-tag">Mean reversion</span>
+                <span class="flip-hint">click to flip</span>
+              </div>
+              <div class="flip-card-back">
+                <div class="flip-back-title">RSI</div>
+                <p class="flip-back-text">
+                  Measures momentum on a <strong>0–100</strong> scale. Buys when
+                  RSI drops below <strong>30</strong> (oversold), sells above
+                  <strong>70</strong> (overbought). Looked like a standout
+                  performer on AAPL alone — but the edge <strong>collapsed</strong>
+                  once tested across 9 tickers. A classic overfitting trap.
+                </p>
+              </div>
             </div>
-            <span class="strategy-tag">Mean reversion</span>
-            <p>Buys oversold dips, sells overbought peaks. Looked perfect on AAPL alone — until tested on 9 tickers.</p>
-            <span class="strategy-badge">⚠ Sharpe collapses to 0.12 outside a strong uptrend — see Compare Strategies</span>
           </div>
-          <div class="strategy-card" [class.selected]="selectedStrategy === 'Buy & Hold'" (click)="selectedStrategy = 'Buy & Hold'">
-            <div class="strategy-card-head">
-              <h3>Buy &amp; Hold</h3>
-              <span class="strategy-check" *ngIf="selectedStrategy === 'Buy & Hold'">✓</span>
+
+          <!-- Buy & Hold -->
+          <div
+            class="flip-card"
+            [class.flipped]="flippedCard === 'BuyHold'"
+            [class.selected]="selectedStrategy === 'Buy & Hold'"
+            (click)="selectedStrategy = 'Buy & Hold'; flippedCard = (flippedCard === 'BuyHold' ? null : 'BuyHold')"
+          >
+            <div class="flip-card-inner">
+              <div class="flip-card-front">
+                <span class="strategy-check" *ngIf="selectedStrategy === 'Buy & Hold'">✓</span>
+                <div class="flip-name">Buy &amp;<br>Hold</div>
+                <span class="flip-tag">Stay invested</span>
+                <span class="flip-hint">click to flip</span>
+              </div>
+              <div class="flip-card-back">
+                <div class="flip-back-title">Buy &amp; Hold</div>
+                <p class="flip-back-text">
+                  The simplest possible strategy: buy on <strong>day one</strong>,
+                  hold through every rally and every drawdown, never touch it
+                  again. No timing, no signals, no trading fees. This is the
+                  <strong>baseline</strong> every "smarter" strategy above has to
+                  actually beat — and often doesn't.
+                </p>
+              </div>
             </div>
-            <span class="strategy-tag">Stay invested</span>
-            <p>Buys once, holds forever. The baseline every strategy above has to actually beat.</p>
           </div>
+
         </div>
 
         <div class="selected-setup-bar">

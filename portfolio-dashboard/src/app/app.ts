@@ -28,7 +28,7 @@ export class App implements OnInit {
 
   // sub-tab within the pre-run explorer panel (Quick picks / How it works / Result preview)
   explorerTab: 'picks' | 'how' | 'preview' = 'picks';
-
+  flippedCard: string | null = null;
   tickers: string[] = [];
   strategies: string[] = [];
 
