@@ -31,7 +31,7 @@
 
 .page-header h1 {
   font-family: 'Joystix', monospace;
-  font-size: 3.2rem;
+  font-size: 4.2rem;
   font-weight: normal;
   margin: 0 0 0.6rem;
   letter-spacing: 0.02em;
@@ -356,7 +356,7 @@ tr.loss .pnl-cell { color: #e05c5c; font-weight: 700; }
   border-bottom: 3px solid transparent;
   color: rgba(255, 255, 255, 0.75);
   font-family: 'Joystix', monospace;
-  font-size: 0.85rem;
+  font-size: 1.05rem;
   cursor: pointer;
   transition: color 0.15s, background 0.15s;
   letter-spacing: 0.03em;
