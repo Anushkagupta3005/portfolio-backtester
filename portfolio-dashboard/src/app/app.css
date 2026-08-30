@@ -22,21 +22,18 @@
   padding: 1.6rem 1.6rem 3rem;
 }
 
-/* ── header (shrunk hero — logo + subtitle now sit inline) ── */
+/* ── header ── */
 .page-header {
-  display: flex;
-  align-items: baseline;
-  gap: 0.9rem;
-  margin-bottom: 0.9rem;
-  padding-bottom: 0.5rem;
+  margin-bottom: 1.1rem;
+  padding-bottom: 0.9rem;
   border-bottom: 2px solid #fd9e28;
 }
 
 .page-header h1 {
   font-family: 'Joystix', monospace;
-  font-size: 1.6rem;
+  font-size: 3.2rem;
   font-weight: bold;
-  margin: 0;
+  margin: 0 0 0.4rem;
   letter-spacing: 0.02em;
   color: #fd9e28;
   text-transform: uppercase;
@@ -46,7 +43,7 @@
 
 .subtitle {
   color: #7a9cb5;
-  font-size: 0.7rem;
+  font-size: 0.78rem;
   margin: 0;
   font-family: 'JetBrains Mono', monospace;
   letter-spacing: 0.02em;
@@ -344,44 +341,37 @@ tr.loss .pnl-cell { color: #e05c5c; font-weight: 700; }
   font-family: 'JetBrains Mono', monospace;
 }
 
-/* ── tab navigation (file-tab style: separate pills, active tab "connects" to panel below) ── */
+/* ── tab navigation ── */
 .tab-nav {
   display: flex;
-  gap: 4px;
-  margin-bottom: 0.9rem;
-  background: transparent;
-  border-bottom: 2px solid #a51e25;
-  padding: 0 0.2rem;
+  gap: 0;
+  margin-bottom: 1.1rem;
+  background: #a51e25;
 }
 
 .tab-btn {
-  flex: 0 1 auto;
-  padding: 0.75rem 1.2rem;
-  background: #1a0a0a;
-  border: 1px solid #a51e25;
-  border-bottom: none;
-  border-radius: 4px 4px 0 0;
-  color: rgba(255, 255, 255, 0.55);
+  flex: 1 1 0;
+  padding: 1rem 1.3rem;
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  color: rgba(255, 255, 255, 0.75);
   font-family: 'Joystix', monospace;
-  font-size: 0.78rem;
+  font-size: 0.85rem;
   cursor: pointer;
   transition: color 0.15s, background 0.15s;
   letter-spacing: 0.03em;
   text-align: center;
-  position: relative;
-  top: 2px;
 }
 
 .tab-btn:hover {
   color: #ffffff;
-  background: #2a1010;
+  background: rgba(0, 0, 0, 0.15);
 }
 
 .tab-btn.active {
   color: #fd9e28;
-  background: #0d2131;
-  border-color: #fd9e28;
-  border-bottom: 2px solid #0d2131;
+  background: rgba(0, 0, 0, 0.25);
 }
 
 /* ── compare chart card ── */
@@ -698,10 +688,10 @@ tr.loss .pnl-cell { color: #e05c5c; font-weight: 700; }
 
 .strategy-card {
   background: #0d2131;
-  padding: 0.8rem 1rem;
+  padding: 1.3rem 1.4rem;
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
+  gap: 0.6rem;
 }
 
 .strategy-card h3 {
@@ -847,7 +837,7 @@ tr.loss .pnl-cell { color: #e05c5c; font-weight: 700; }
 /* ── header with last-run badge ── */
 .header-top {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 1rem;
   flex-wrap: wrap;
@@ -991,10 +981,10 @@ tr.loss .pnl-cell { color: #e05c5c; font-weight: 700; }
 
 .explorer-panel .strategy-card {
   background: #000000;
-  padding: 0.7rem 0.9rem;
+  padding: 1.1rem 1.2rem;
   display: flex;
   flex-direction: column;
-  gap: 0.3rem;
+  gap: 0.5rem;
   cursor: pointer;
   transition: background 0.15s;
 }
@@ -1279,14 +1269,14 @@ tr.loss .pnl-cell { color: #e05c5c; font-weight: 700; }
   background: transparent;
   perspective: 1000px;
   cursor: pointer;
-  min-height: 170px;
+  min-height: 220px;
 }
 
 .flip-card-inner {
   position: relative;
   width: 100%;
   height: 100%;
-  min-height: 170px;
+  min-height: 220px;
   text-align: left;
   transition: transform 0.6s;
   transform-style: preserve-3d;
@@ -1301,11 +1291,11 @@ tr.loss .pnl-cell { color: #e05c5c; font-weight: 700; }
   position: absolute;
   width: 100%;
   height: 100%;
-  min-height: 170px;
+  min-height: 220px;
   backface-visibility: hidden;
   display: flex;
   flex-direction: column;
-  padding: 0.9rem 1rem;
+  padding: 1.3rem 1.2rem;
   background: #000000;
   transition: background 0.15s;
 }
